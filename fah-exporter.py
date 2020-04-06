@@ -5,6 +5,7 @@ import subprocess
 import re
 import json
 import os
+import multiprocessing
 
 # {
 #    "id": "00",
@@ -57,8 +58,12 @@ class FahCollector(object):
         fah_clients = os.getenv('FAH_CLIENTS').split(',')
         fah_slot_metric = Metric(
             'fah_slot_info', 'FAH work slot info', 'gauge')
-        fah_jobs_metric = Metric(
-            'fah_jobs_info', 'FAH job info', 'gauge')
+        fah_job_credit = Metric(
+            'fah_job_credit', 'FAH job credit estimate', 'gauge')
+        fah_job_progress = Metric(
+            'fah_job_progress', 'FAH job percentage progress', 'gauge')
+        fah_job_status = Metric(
+            'fah_job_status', 'FAH job status', 'gauge')
         for client in fah_clients:
             command = "slot-info"
             fah_command = generate_fah_command(client, command)
@@ -93,20 +98,21 @@ class FahCollector(object):
             fah_jobs_info = json.loads(json_compatible)
 
             for job in fah_jobs_info:
-
-                fah_jobs_metric.add_sample('fah_jobs_info', value=convert_fah_status(job['state']), labels={
-                    'slot_id': str(job['id']),
-                    'description': str(job['state']),
+                fah_job_status.add_sample('fah_job_status', value=convert_fah_status(job['state']), labels={
                     'project': str(job['project']),
-                    'percentdone': str(job['percentdone']),
-                    'creditestimate': str(job['creditestimate']),
-                    'collectionserver': str(job['cs']),
-                    'workerserver': str(job['ws']),
+                    'fah_worker': str(client),
+                })
+                fah_job_progress.add_sample('fah_job_progress', value=job['percentdone'].replace("%", ""), labels={
+                    'fah_worker': str(client),
+                })
+                fah_job_credit.add_sample('fah_job_credit', value=job['creditestimate'], labels={
                     'fah_worker': str(client),
                 })
 
         yield fah_slot_metric
-        yield fah_jobs_metric
+        yield fah_job_status
+        yield fah_job_progress
+        yield fah_job_credit
 
 
 if __name__ == '__main__':
