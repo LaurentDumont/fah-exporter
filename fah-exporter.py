@@ -120,6 +120,7 @@ class FahCollector(object):
                     'fah_worker': str(job['worker_name']),
                 })
                 fah_job_credit.add_sample('fah_job_credit', value=job['creditestimate'], labels={
+                    'id': str(job['id']),
                     'fah_worker': str(job['worker_name']),
                 })
 
