@@ -115,9 +115,8 @@ class FahCollector(object):
             for job in data:
                 fah_job_status.add_sample('fah_job_status', value=convert_fah_status(job['state']), labels={
                     'project': str(job['project']),
-                    'fah_worker': str(job['worker_name']),
-                })
-                fah_job_progress.add_sample('fah_job_progress', value=job['percentdone'].replace("%", ""), labels={
+                    'percentdone': str(job['percentdone'].replace('%', '')),
+                    'waitingon': str(job['waitingon']),
                     'fah_worker': str(job['worker_name']),
                 })
                 fah_job_credit.add_sample('fah_job_credit', value=job['creditestimate'], labels={
@@ -126,7 +125,6 @@ class FahCollector(object):
 
         yield fah_slot_metric
         yield fah_job_status
-        yield fah_job_progress
         yield fah_job_credit
 
 
