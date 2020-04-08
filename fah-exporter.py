@@ -74,6 +74,14 @@ EOF
     return fah_command
 
 
+def get_cpu_count(string):
+
+    split_string = string.split(':')
+    if 'cpu' in split_string[0]:
+        return split_string[1]
+    return 0
+
+
 # Convert the status into a numerical value.
 # Return the numerical value if found, 666 if no matches.
 def convert_fah_status(status):
@@ -99,6 +107,8 @@ class FahCollector(object):
             'fah_job_progress', 'FAH job percentage progress', 'gauge')
         fah_job_status = Metric(
             'fah_job_status', 'FAH job status', 'gauge')
+        fah_slot_cpu = Metric(
+            'fah_slot_cpu', 'FAH total CPUs currently active', 'gauge')
 
         info_type = "slots"
         json_data = thread_fah_requests(fah_clients, info_type)
@@ -109,6 +119,10 @@ class FahCollector(object):
                     'description': str(slot['description']),
                     'fah_worker': str(slot['worker_name']),
                 })
+                fah_slot_cpu.add_sample('fah_slot_cpu', value=get_cpu_count(slot['description']), labels={
+                    'slot_id': str(slot['id']),
+                    'fah_worker': str(slot['worker_name']),
+                })
         info_type = "queues"
         json_data = thread_fah_requests(fah_clients, info_type)
         for data in json_data:
@@ -117,6 +131,7 @@ class FahCollector(object):
                     'project': str(job['project']),
                     'percentdone': str(job['percentdone'].replace('%', '')),
                     'waitingon': str(job['waitingon']),
+                    'slot': str(job['slot']),
                     'fah_worker': str(job['worker_name']),
                 })
                 fah_job_credit.add_sample('fah_job_credit', value=job['creditestimate'], labels={
@@ -127,6 +142,7 @@ class FahCollector(object):
         yield fah_slot_metric
         yield fah_job_status
         yield fah_job_credit
+        yield fah_slot_cpu
 
 
 if __name__ == '__main__':
