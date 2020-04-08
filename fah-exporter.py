@@ -85,11 +85,11 @@ def get_cpu_count(string):
 # Convert the status into a numerical value.
 # Return the numerical value if found, 666 if no matches.
 def convert_fah_status(status):
-    status_map = {'READY': 0,
-                  'RUNNING': 1,
-                  'IDLE': 3,
-                  'DOWNLOAD': 4, }
-    return status_map.get(status, 666)
+    status_map = {'READY': 100,
+                  'RUNNING': 101,
+                  'IDLE': 1,
+                  'DOWNLOAD': 2, }
+    return status_map.get(status, 66)
 
 
 class FahCollector(object):
