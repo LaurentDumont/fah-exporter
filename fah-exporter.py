@@ -87,7 +87,7 @@ def get_cpu_count(string):
 def convert_fah_status(status):
     status_map = {'READY': 100,
                   'RUNNING': 101,
-                  'SEND', 102,
+                  'SEND': 102,
                   'IDLE': 1,
                   'DOWNLOAD': 2, }
     return status_map.get(status, 66)
