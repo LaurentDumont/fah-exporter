@@ -75,7 +75,6 @@ EOF
 
 
 def get_cpu_count(string):
-
     split_string = string.split(':')
     if 'cpu' in split_string[0]:
         return split_string[1]
