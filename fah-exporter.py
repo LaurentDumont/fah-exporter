@@ -132,6 +132,12 @@ class FahCollector(object):
                     'percentdone': str(job['percentdone'].replace('%', '')),
                     'waitingon': str(job['waitingon']),
                     'slot': str(job['slot']),
+                    'eta': str(job['eta']),
+                    'timeremaining': str(job['timeremaining']),
+                    'assigned': str(job['assigned']),
+                    'timeout': str(job['eta']),
+                    'deadline': str(job['deadline']),
+                    'attempts': str(job['attempts']),
                     'fah_worker': str(job['worker_name']),
                 })
                 fah_job_credit.add_sample('fah_job_credit', value=job['creditestimate'], labels={
